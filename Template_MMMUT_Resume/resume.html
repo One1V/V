@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Resume Generator</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #eef1f5;
+    color: #111;
+}
+
+/* =========================
+   APP LAYOUT
+========================= */
+
+.app {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    min-height: 100vh;
+}
+
+.form-panel {
+    background: #ffffff;
+    padding: 25px;
+    overflow-y: auto;
+    height: 100vh;
+    border-right: 1px solid #ddd;
+}
+
+.preview-panel {
+    padding: 30px;
+    overflow: auto;
+}
+
+/* =========================
+   FORM
+========================= */
+
+h1 {
+    margin: 0 0 5px;
+    font-size: 24px;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 25px 0 12px;
+    padding-bottom: 7px;
+    border-bottom: 2px solid #111;
+}
+
+label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 10px 0 5px;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: #111;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.entry {
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #fafafa;
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.entry-header strong {
+    font-size: 13px;
+}
+
+.remove-btn {
+    border: none;
+    background: #eee;
+    color: #b00020;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-btn {
+    width: 100%;
+    border: 1px dashed #888;
+    background: white;
+    padding: 9px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.add-btn:hover {
+    background: #f4f4f4;
+}
+
+.generate-btn {
+    width: 100%;
+    margin-top: 25px;
+    padding: 13px;
+    border: none;
+    border-radius: 6px;
+    background: #111;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.generate-btn:hover {
+    background: #333;
+}
+
+/* =========================
+   RESUME
+========================= */
+
+.resume-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.resume {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    padding: 10mm 11mm 7mm 13mm;
+    box-shadow: 0 0 15px rgba(0,0,0,0.15);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    line-height: 1.25;
+}
+
+/* Header */
+
+.resume-header {
+    text-align: left;
+    margin-bottom: 8px;
+}
+
+.name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.name {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.phone {
+    font-size: 10px;
+}
+
+.contact-line {
+    display: flex;
+    justify-content: space-between;
+    min-height: 15px;
+}
+
+.contact-left,
+.contact-right {
+    display: flex;
+    gap: 8px;
+}
+
+.contact-right a {
+    color: #111;
+    text-decoration: none;
+}
+
+.university {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* Sections */
+
+.resume-section {
+    margin-top: 8px;
+}
+
+.resume-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 3px;
+    padding-bottom: 1px;
+    border-bottom: 1px solid #111;
+}
+
+.resume-entry {
+    margin-bottom: 5px;
+}
+
+.entry-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.entry-title {
+    font-weight: 700;
+}
+
+.entry-date {
+    font-style: italic;
+    white-space: nowrap;
+}
+
+.entry-subtitle {
+    display: flex;
+    justify-content: space-between;
+    font-style: italic;
+}
+
+.resume ul {
+    margin: 2px 0 0 15px;
+    padding: 0;
+}
+
+.resume li {
+    margin-bottom: 1px;
+}
+
+.project-description {
+    font-style: italic;
+    margin: 1px 0;
+}
+
+.project-link {
+    color: #111;
+    text-decoration: underline;
+    font-weight: 700;
+}
+
+/* Skills */
+
+.skills-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.skills-table td {
+    padding: 1px 0;
+    vertical-align: top;
+}
+
+.skills-label {
+    font-weight: 700;
+    width: 125px;
+}
+
+/* Empty */
+
+.empty {
+    color: #888;
+    font-style: italic;
+}
+
+/* =========================
+   PRINT
+========================= */
+
+@media print {
+
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
+    body {
+        background: white;
+    }
+
+    .form-panel {
+        display: none;
+    }
+
+    .preview-panel {
+        padding: 0;
+    }
+
+    .resume-wrapper {
+        display: block;
+    }
+
+    .resume {
+        width: 210mm;
+        min-height: 297mm;
+        box-shadow: none;
+        margin: 0;
+    }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width: 900px) {
+
+    .app {
+        grid-template-columns: 1fr;
+    }
+
+    .form-panel {
+        height: auto;
+        border-right: none;
+    }
+
+    .preview-panel {
+        padding: 10px;
+    }
+
+    .resume {
+        transform-origin: top left;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =====================================================
+     FORM PANEL
+===================================================== -->
+
+<div class="form-panel">
+
+<h1>Student Resume Generator</h1>
+
+<div class="subtitle">
+Create a professional one-page resume for placements.
+</div>
+
+
+<!-- ================= PERSONAL ================= -->
+
+<div class="section-title">
+Personal Information
+</div>
+
+<label>Name</label>
+<input id="name" placeholder="Your Name">
+
+<div class="form-grid">
+
+<div>
+<label>Phone</label>
+<input id="phone" placeholder="+91-XXXXXXXXXX">
+</div>
+
+<div>
+<label>Roll Number</label>
+<input id="roll" placeholder="2024XXXX">
+</div>
+
+</div>
+
+<div class="form-grid">
+
+<div>
+<label>Program</label>
+<input id="program" placeholder="B.Tech">
+</div>
+
+<div>
+<label>Course</label>
+<input id="course" placeholder="Information Technology">
+</div>
+
+</div>
+
+<label>Email</label>
+<input id="email" placeholder="your@email.com">
+
+<label>Official College Email</label>
+<input id="collegeEmail" placeholder="officialemail@mmmut.ac.in">
+
+<div class="form-grid">
+
+<div>
+<label>GitHub</label>
+<input id="github" placeholder="github.com/username">
+</div>
+
+<div>
+<label>LinkedIn</label>
+<input id="linkedin" placeholder="linkedin.com/in/username">
+</div>
+
+</div>
+
+
+<!-- ================= EDUCATION ================= -->
+
+<div class="section-title">
+Education
+</div>
+
+<div id="educationContainer"></div>
+
+<button class="add-btn" onclick="addEducation()">
++ Add Education
+</button>
+
+
+<!-- ================= EXPERIENCE ================= -->
+
+<div class="section-title">
+Experience
+</div>
+
+<div id="experienceContainer"></div>
+
+<button class="add-btn" onclick="addExperience()">
++ Add Experience
+</button>
+
+
+<!-- ================= PROJECTS ================= -->
+
+<div class="section-title">
+Projects
+</div>
+
+<div id="projectsContainer"></div>
+
+<button class="add-btn" onclick="addProject()">
++ Add Project
+</button>
+
+
+<!-- ================= SKILLS ================= -->
+
+<div class="section-title">
+Skills
+</div>
+
+<label>Languages</label>
+<input id="languages" placeholder="C++, JavaScript, Python">
+
+<label>Developer Tools</label>
+<input id="tools" placeholder="Git, GitHub, VS Code, Docker">
+
+<label>Frameworks</label>
+<input id="frameworks" placeholder="React, Node.js, Express">
+
+<label>Cloud / Databases</label>
+<input id="databases" placeholder="MongoDB, PostgreSQL, AWS">
+
+<label>Soft Skills</label>
+<input id="softSkills" placeholder="Leadership, Communication">
+
+<label>Coursework</label>
+<input id="coursework" placeholder="DSA, DBMS, OS, Computer Networks">
+
+<label>Areas of Interest</label>
+<input id="interests" placeholder="Backend Development, AI/ML">
+
+
+<!-- ================= POR ================= -->
+
+<div class="section-title">
+Position of Responsibility
+</div>
+
+<div id="porContainer"></div>
+
+<button class="add-btn" onclick="addPOR()">
++ Add Position
+</button>
+
+
+<!-- ================= ACHIEVEMENTS ================= -->
+
+<div class="section-title">
+Achievements
+</div>
+
+<div id="achievementContainer"></div>
+
+<button class="add-btn" onclick="addAchievement()">
++ Add Achievement
+</button>
+
+
+<button class="generate-btn" onclick="window.print()">
+Print / Save Resume as PDF
+</button>
+
+</div>
+
+
+<!-- =====================================================
+     RESUME PREVIEW
+===================================================== -->
+
+<div class="preview-panel">
+
+<div class="resume-wrapper">
+
+<div class="resume" id="resume">
+
+<!-- Header -->
+
+<div class="resume-header">
+
+<div class="name-row">
+
+<div class="name" id="rName">
+Your Name
+</div>
+
+<div class="phone" id="rPhone">
++91-XXXXXXXXXX
+</div>
+
+</div>
+
+
+<div class="contact-line">
+
+<div class="contact-left">
+
+<span id="rRoll">
+Roll No.: XXXXXXX
+</span>
+
+<span id="rProgram">
+B.Tech
+</span>
+
+<span id="rCourse">
+Information Technology
+</span>
+
+</div>
+
+<div class="contact-right">
+
+<a id="rEmail" href="#">
+your@email.com
+</a>
+
+</div>
+
+</div>
+
+
+<div class="contact-line">
+
+<div class="contact-left">
+
+<span id="rCollegeEmail">
+officialemail@mmmut.ac.in
+</span>
+
+</div>
+
+<div class="contact-right">
+
+<a id="rGithub" href="#" target="_blank">
+GitHub Profile
+</a>
+
+<a id="rLinkedin" href="#" target="_blank">
+LinkedIn Profile
+</a>
+
+</div>
+
+</div>
+
+
+<div class="university">
+Madan Mohan Malaviya University of Technology, Gorakhpur
+</div>
+
+</div>
+
+
+<!-- EDUCATION -->
+
+<div class="resume-section">
+
+<div class="resume-section-title">
+Education
+</div>
+
+<div id="rEducation"></div>
+
+</div>
+
+
+<!-- EXPERIENCE -->
+
+<div class="resume-section">
+
+<div class="resume-section-title">
+Experience
+</div>
+
+<div id="rExperience"></div>
+
+</div>
+
+
+<!-- PROJECTS -->
+
+<div class="resume-section">
+
+<div class="resume-section-title">
+Projects
+</div>
+
+<div id="rProjects"></div>
+
+</div>
+
+
+<!-- SKILLS -->
+
+<div class="resume-section">
+
+<div class="resume-section-title">
+Skills
+</div>
+
+<table class="skills-table">
+
+<tr>
+<td class="skills-label">Languages:</td>
+<td id="rLanguages"></td>
+</tr>
+
+<tr>
+<td class="skills-label">Developer Tools:</td>
+<td id="rTools"></td>
+</tr>
+
+<tr>
+<td class="skills-label">Frameworks:</td>
+<td id="rFrameworks"></td>
+</tr>
+
+<tr>
+<td class="skills-label">Cloud/Databases:</td>
+<td id="rDatabases"></td>
+</tr>
+
+<tr>
+<td class="skills-label">Soft Skills:</td>
+<td id="rSoftSkills"></td>
+</tr>
+
+<tr>
+<td class="skills-label">Coursework:</td>
+<td id="rCoursework"></td>
+</tr>
+
+<tr>
+<td class="skills-label">Areas of Interest:</td>
+<td id="rInterests"></td>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- POR -->
+
+<div class="resume-section">
+
+<div class="resume-section-title">
+Position of Responsibility
+</div>
+
+<div id="rPOR"></div>
+
+</div>
+
+
+<!-- ACHIEVEMENTS -->
+
+<div class="resume-section">
+
+<div class="resume-section-title">
+Achievements
+</div>
+
+<div id="rAchievements"></div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   HELPER
+===================================================== */
+
+function value(id) {
+    return document.getElementById(id).value.trim();
+}
+
+
+function escapeHTML(text) {
+
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =====================================================
+   EDUCATION
+===================================================== */
+
+let educationCount = 0;
+
+function addEducation() {
+
+    educationCount++;
+
+    const container =
+        document.getElementById("educationContainer");
+
+    const div = document.createElement("div");
+
+    div.className = "entry";
+
+    div.innerHTML = `
+
+        <div class="entry-header">
+
+            <strong>Education ${educationCount}</strong>
+
+            <button class="remove-btn"
+                    onclick="this.parentElement.parentElement.remove(); updateResume();">
+                Remove
+            </button>
+
+        </div>
+
+        <label>Institution</label>
+        <input class="edu-institution"
+               placeholder="Madan Mohan Malaviya University of Technology, Gorakhpur">
+
+        <div class="form-grid">
+
+            <div>
+
+                <label>Year</label>
+
+                <input class="edu-year"
+                       placeholder="2028">
+
+            </div>
+
+            <div>
+
+                <label>Degree / Course</label>
+
+                <input class="edu-degree"
+                       placeholder="B.Tech Information Technology">
+
+            </div>
+
+        </div>
+
+        <label>CGPA / Percentage</label>
+
+        <input class="edu-score"
+               placeholder="8.90">
+
+    `;
+
+    container.appendChild(div);
+
+    updateResume();
+}
+
+
+/* =====================================================
+   EXPERIENCE
+===================================================== */
+
+let experienceCount = 0;
+
+function addExperience() {
+
+    experienceCount++;
+
+    const container =
+        document.getElementById("experienceContainer");
+
+    const div = document.createElement("div");
+
+    div.className = "entry";
+
+    div.innerHTML = `
+
+        <div class="entry-header">
+
+            <strong>Experience ${experienceCount}</strong>
+
+            <button class="remove-btn"
+                    onclick="this.parentElement.parentElement.remove(); updateResume();">
+                Remove
+            </button>
+
+        </div>
+
+        <label>Company</label>
+        <input class="exp-company"
+               placeholder="Company Name">
+
+        <div class="form-grid">
+
+            <div>
+
+                <label>Role</label>
+
+                <input class="exp-role"
+                       placeholder="Software Developer Intern">
+
+            </div>
+
+            <div>
+
+                <label>Location</label>
+
+                <input class="exp-location"
+                       placeholder="Remote / Gorakhpur">
+
+            </div>
+
+        </div>
+
+        <label>Dates</label>
+
+        <input class="exp-date"
+               placeholder="May 2026 – July 2026">
+
+        <label>Work Description 1</label>
+
+        <textarea class="exp-desc">
+        </textarea>
+
+        <label>Work Description 2</label>
+
+        <textarea class="exp-desc">
+        </textarea>
+
+    `;
+
+    container.appendChild(div);
+
+    updateResume();
+}
+
+
+/* =====================================================
+   PROJECTS
+===================================================== */
+
+let projectCount = 0;
+
+function addProject() {
+
+    projectCount++;
+
+    const container =
+        document.getElementById("projectsContainer");
+
+    const div = document.createElement("div");
+
+    div.className = "entry";
+
+    div.innerHTML = `
+
+        <div class="entry-header">
+
+            <strong>Project ${projectCount}</strong>
+
+            <button class="remove-btn"
+                    onclick="this.parentElement.parentElement.remove(); updateResume();">
+                Remove
+            </button>
+
+        </div>
+
+        <label>Project Name</label>
+
+        <input class="project-name"
+               placeholder="Twitter Clone">
+
+        <label>Project Link</label>
+
+        <input class="project-link-input"
+               placeholder="github.com/username/project">
+
+        <div class="form-grid">
+
+            <div>
+
+                <label>Date</label>
+
+                <input class="project-date"
+                       placeholder="2026">
+
+            </div>
+
+            <div>
+
+                <label>Technologies</label>
+
+                <input class="project-tech"
+                       placeholder="React, Node.js, MongoDB">
+
+            </div>
+
+        </div>
+
+        <label>Project Description</label>
+
+        <textarea class="project-description-input"
+                  placeholder="Describe what you built"></textarea>
+
+        <label>Achievement / Result</label>
+
+        <textarea class="project-result"
+                  placeholder="Mention measurable output or result"></textarea>
+
+    `;
+
+    container.appendChild(div);
+
+    updateResume();
+}
+
+
+/* =====================================================
+   POSITION OF RESPONSIBILITY
+===================================================== */
+
+let porCount = 0;
+
+function addPOR() {
+
+    porCount++;
+
+    const container =
+        document.getElementById("porContainer");
+
+    const div = document.createElement("div");
+
+    div.className = "entry";
+
+    div.innerHTML = `
+
+        <div class="entry-header">
+
+            <strong>Position ${porCount}</strong>
+
+            <button class="remove-btn"
+                    onclick="this.parentElement.parentElement.remove(); updateResume();">
+                Remove
+            </button>
+
+        </div>
+
+        <div class="form-grid">
+
+            <div>
+
+                <label>Position / Club / Event</label>
+
+                <input class="por-title"
+                       placeholder="Joint Secretary, CSSE">
+
+            </div>
+
+            <div>
+
+                <label>Tenure</label>
+
+                <input class="por-date"
+                       placeholder="2025 – 2026">
+
+            </div>
+
+        </div>
+
+    `;
+
+    container.appendChild(div);
+
+    updateResume();
+}
+
+
+/* =====================================================
+   ACHIEVEMENTS
+===================================================== */
+
+let achievementCount = 0;
+
+function addAchievement() {
+
+    achievementCount++;
+
+    const container =
+        document.getElementById("achievementContainer");
+
+    const div = document.createElement("div");
+
+    div.className = "entry";
+
+    div.innerHTML = `
+
+        <div class="entry-header">
+
+            <strong>Achievement ${achievementCount}</strong>
+
+            <button class="remove-btn"
+                    onclick="this.parentElement.parentElement.remove(); updateResume();">
+                Remove
+            </button>
+
+        </div>
+
+        <label>Achievement</label>
+
+        <input class="achievement-title"
+               placeholder="Rank 1 in college hackathon">
+
+        <label>Date</label>
+
+        <input class="achievement-date"
+               placeholder="2026">
+
+    `;
+
+    container.appendChild(div);
+
+    updateResume();
+}
+
+
+/* =====================================================
+   UPDATE HEADER
+===================================================== */
+
+function updateHeader() {
+
+    document.getElementById("rName").textContent =
+        value("name") || "Your Name";
+
+    document.getElementById("rPhone").textContent =
+        value("phone") || "+91-XXXXXXXXXX";
+
+    document.getElementById("rRoll").textContent =
+        "Roll No.: " + (value("roll") || "XXXXXXX");
+
+    document.getElementById("rProgram").textContent =
+        value("program") || "B.Tech";
+
+    document.getElementById("rCourse").textContent =
+        value("course") || "Information Technology";
+
+    const email = value("email") || "your@email.com";
+
+    document.getElementById("rEmail").textContent = email;
+
+    document.getElementById("rEmail").href =
+        "mailto:" + email;
+
+    const collegeEmail =
+        value("collegeEmail") ||
+        "officialemail@mmmut.ac.in";
+
+    document.getElementById("rCollegeEmail")
+        .textContent = collegeEmail;
+
+    const github =
+        value("github");
+
+    const githubElement =
+        document.getElementById("rGithub");
+
+    githubElement.textContent =
+        github || "GitHub Profile";
+
+    githubElement.href =
+        github
+        ? (github.startsWith("http")
+            ? github
+            : "https://" + github)
+        : "#";
+
+    const linkedin =
+        value("linkedin");
+
+    const linkedinElement =
+        document.getElementById("rLinkedin");
+
+    linkedinElement.textContent =
+        linkedin || "LinkedIn Profile";
+
+    linkedinElement.href =
+        linkedin
+        ? (linkedin.startsWith("http")
+            ? linkedin
+            : "https://" + linkedin)
+        : "#";
+}
+
+
+/* =====================================================
+   UPDATE EDUCATION
+===================================================== */
+
+function updateEducation() {
+
+    const entries =
+        document.querySelectorAll(
+            "#educationContainer .entry"
+        );
+
+    const output =
+        document.getElementById("rEducation");
+
+    output.innerHTML = "";
+
+    entries.forEach(entry => {
+
+        const institution =
+            entry.querySelector(".edu-institution").value;
+
+        const year =
+            entry.querySelector(".edu-year").value;
+
+        const degree =
+            entry.querySelector(".edu-degree").value;
+
+        const score =
+            entry.querySelector(".edu-score").value;
+
+        output.innerHTML += `
+
+            <div class="resume-entry">
+
+                <div class="entry-top">
+
+                    <span class="entry-title">
+                        ${escapeHTML(institution || "Institution")}
+                    </span>
+
+                    <span class="entry-date">
+                        ${escapeHTML(year || "Year")}
+                    </span>
+
+                </div>
+
+                <div class="entry-subtitle">
+
+                    <span>
+                        ${escapeHTML(degree || "Degree / Course")}
+                    </span>
+
+                    <span>
+                        ${score
+                            ? "CGPA/Percentage: " +
+                              escapeHTML(score)
+                            : ""}
+                    </span>
+
+                </div>
+
+            </div>
+
+        `;
+    });
+}
+
+
+/* =====================================================
+   UPDATE EXPERIENCE
+===================================================== */
+
+function updateExperience() {
+
+    const entries =
+        document.querySelectorAll(
+            "#experienceContainer .entry"
+        );
+
+    const output =
+        document.getElementById("rExperience");
+
+    output.innerHTML = "";
+
+    entries.forEach(entry => {
+
+        const company =
+            entry.querySelector(".exp-company").value;
+
+        const role =
+            entry.querySelector(".exp-role").value;
+
+        const location =
+            entry.querySelector(".exp-location").value;
+
+        const date =
+            entry.querySelector(".exp-date").value;
+
+        const descriptions =
+            entry.querySelectorAll(".exp-desc");
+
+        let bullets = "";
+
+        descriptions.forEach(desc => {
+
+            if (desc.value.trim()) {
+
+                bullets +=
+                    `<li>${escapeHTML(desc.value.trim())}</li>`;
+
+            }
+
+        });
+
+        output.innerHTML += `
+
+            <div class="resume-entry">
+
+                <div class="entry-top">
+
+                    <span class="entry-title">
+                        ${escapeHTML(company || "Company Name")}
+                    </span>
+
+                    <span class="entry-date">
+                        ${escapeHTML(date || "Event dates")}
+                    </span>
+
+                </div>
+
+                <div class="entry-subtitle">
+
+                    <span>
+                        ${escapeHTML(role || "Your Role")}
+                    </span>
+
+                    <span>
+                        ${escapeHTML(location || "City")}
+                    </span>
+
+                </div>
+
+                ${bullets
+                    ? `<ul>${bullets}</ul>`
+                    : ""}
+
+            </div>
+
+        `;
+    });
+}
+
+
+/* =====================================================
+   UPDATE PROJECTS
+===================================================== */
+
+function updateProjects() {
+
+    const entries =
+        document.querySelectorAll(
+            "#projectsContainer .entry"
+        );
+
+    const output =
+        document.getElementById("rProjects");
+
+    output.innerHTML = "";
+
+    entries.forEach(entry => {
+
+        const name =
+            entry.querySelector(".project-name").value;
+
+        const link =
+            entry.querySelector(".project-link-input").value;
+
+        const date =
+            entry.querySelector(".project-date").value;
+
+        const tech =
+            entry.querySelector(".project-tech").value;
+
+        const description =
+            entry.querySelector(".project-description-input").value;
+
+        const result =
+            entry.querySelector(".project-result").value;
+
+        let linkHTML = "";
+
+        if (link) {
+
+            const url =
+                link.startsWith("http")
+                    ? link
+                    : "https://" + link;
+
+            linkHTML =
+                ` <a class="project-link"
+                    href="${url}"
+                    target="_blank">[Link]</a>`;
+
+        }
+
+        output.innerHTML += `
+
+            <div class="resume-entry">
+
+                <div class="entry-top">
+
+                    <span class="entry-title">
+
+                        ${escapeHTML(name || "Project Name")}
+
+                        ${linkHTML}
+
+                    </span>
+
+                    <span class="entry-date">
+                        ${escapeHTML(date || "")}
+                    </span>
+
+                </div>
+
+                ${
+                    description
+                    ? `<div class="project-description">
+                        ${escapeHTML(description)}
+                       </div>`
+                    : ""
+                }
+
+                ${
+                    tech
+                    ? `<ul>
+                        <li>
+                            <strong>Tools & technologies used:</strong>
+                            ${escapeHTML(tech)}
+                        </li>
+                       </ul>`
+                    : ""
+                }
+
+                ${
+                    result
+                    ? `<ul>
+                        <li>
+                            ${escapeHTML(result)}
+                        </li>
+                       </ul>`
+                    : ""
+                }
+
+            </div>
+
+        `;
+    });
+}
+
+
+/* =====================================================
+   UPDATE SKILLS
+===================================================== */
+
+function updateSkills() {
+
+    document.getElementById("rLanguages")
+        .textContent =
+        value("languages");
+
+    document.getElementById("rTools")
+        .textContent =
+        value("tools");
+
+    document.getElementById("rFrameworks")
+        .textContent =
+        value("frameworks");
+
+    document.getElementById("rDatabases")
+        .textContent =
+        value("databases");
+
+    document.getElementById("rSoftSkills")
+        .textContent =
+        value("softSkills");
+
+    document.getElementById("rCoursework")
+        .textContent =
+        value("coursework");
+
+    document.getElementById("rInterests")
+        .textContent =
+        value("interests");
+}
+
+
+/* =====================================================
+   UPDATE POR
+===================================================== */
+
+function updatePOR() {
+
+    const entries =
+        document.querySelectorAll(
+            "#porContainer .entry"
+        );
+
+    const output =
+        document.getElementById("rPOR");
+
+    output.innerHTML = "";
+
+    entries.forEach(entry => {
+
+        const title =
+            entry.querySelector(".por-title").value;
+
+        const date =
+            entry.querySelector(".por-date").value;
+
+        output.innerHTML += `
+
+            <div class="resume-entry">
+
+                <div class="entry-top">
+
+                    <span class="entry-title">
+                        • ${escapeHTML(title || "Position, Club or Event")}
+                    </span>
+
+                    <span class="entry-date">
+                        ${escapeHTML(date || "Position tenure")}
+                    </span>
+
+                </div>
+
+            </div>
+
+        `;
+    });
+}
+
+
+/* =====================================================
+   UPDATE ACHIEVEMENTS
+===================================================== */
+
+function updateAchievements() {
+
+    const entries =
+        document.querySelectorAll(
+            "#achievementContainer .entry"
+        );
+
+    const output =
+        document.getElementById("rAchievements");
+
+    output.innerHTML = "";
+
+    entries.forEach(entry => {
+
+        const title =
+            entry.querySelector(".achievement-title").value;
+
+        const date =
+            entry.querySelector(".achievement-date").value;
+
+        output.innerHTML += `
+
+            <div class="resume-entry">
+
+                <div class="entry-top">
+
+                    <span class="entry-title">
+                        • ${escapeHTML(title || "Achievement description")}
+                    </span>
+
+                    <span class="entry-date">
+                        ${escapeHTML(date || "Event dates")}
+                    </span>
+
+                </div>
+
+            </div>
+
+        `;
+    });
+}
+
+
+/* =====================================================
+   MAIN UPDATE
+===================================================== */
+
+function updateResume() {
+
+    updateHeader();
+
+    updateEducation();
+
+    updateExperience();
+
+    updateProjects();
+
+    updateSkills();
+
+    updatePOR();
+
+    updateAchievements();
+}
+
+
+/* =====================================================
+   LIVE INPUT
+===================================================== */
+
+document.addEventListener(
+    "input",
+    updateResume
+);
+
+
+/* =====================================================
+   DEFAULT ENTRIES
+===================================================== */
+
+addEducation();
+
+addEducation();
+
+addEducation();
+
+addProject();
+
+addProject();
+
+addPOR();
+
+addPOR();
+
+addAchievement();
+
+addAchievement();
+
+updateResume();
+
+</script>
+
+</body>
+</html>
